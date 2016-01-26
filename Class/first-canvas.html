@@ -16,6 +16,8 @@
 		
 		// #1 call the init function after the pages loads
 		window.onload = init;
+
+		var ctx;
 	
 		function init(){
 			console.log("page loaded!");
@@ -25,13 +27,36 @@
 			var canvas = document.querySelector('canvas');
 			
 			// B - the ctx variable points at a "2D drawing context"
-			var ctx = canvas.getContext('2d');
+			ctx = canvas.getContext('2d');
 			
 			// C - all fill operations are now in red
-			ctx.fillStyle = 'red'; 
+			ctx.fillStyle = 'red'; //fill style is a state variable
 			
 			// D - fill a rectangle with the current fill color
-			ctx.fillRect(20,20,600,440); 
+			ctx.fillRect(20, 20, 600, 440);
+			//drawRandomRectangle();
+			setInterval(drawRandomRectangle, 1000/60); //Calls it 60 times per second
+			setInterval(cls, 5000);
+		}
+
+		function drawRandomRectangle(){
+			ctx.fillStyle = getRandomColor();
+			var x = Math.random()*640;
+			var y = Math.random()*480;
+			var width = Math.random()*90 + 10;
+			var height = Math.random()*90 + 10;
+			ctx.fillRect(x, y, width, height); 
+		}
+
+		function getRandomColor(){
+			function getByte(){ //This is a closure: a function inside a function
+				return 55 + Math.round(Math.random()*200);
+			}
+			return "rgb("+getByte()+","+getByte()+","+getByte()+")";
+		}
+
+		function cls(){ //clear screen
+			ctx.clearRect(0, 0, 640, 480);
 		}
 	</script>
 </head>
