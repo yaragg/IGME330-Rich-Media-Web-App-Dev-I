@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>First Canvas Done</title>
+	<style type="text/css">
+	canvas{
+		border:1px solid gray;
+	}
+	</style>
+	<script>
+		// #0 - in this class we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+		'use strict';
+		
+		// #1 call the init function after the pages loads
+		window.onload = init;
+		var ctx;
+		var counter = 0;
+		var lineDashes = [[0],[5],[1,2],[2,3],[5,5,2,2]];
+		function init(){
+			console.log("page loaded!");
+			// #2 Now that the page has loaded, start drawing!
+			
+			// A - canvas variable points at <canvas> tag
+			var canvas = document.querySelector('canvas');
+			
+			// B - the ctx variable points at a "2D drawing context"
+			ctx = canvas.getContext('2d');
+			
+			// C - all fill operations are now in red
+			ctx.fillStyle = 'red'; 
+			
+			// D - fill a rectangle with the current fill color
+			ctx.fillRect(20,20,600,440);
+			
+			
+			//drawRandomRectangle();
+			// setInterval(update,1000/60);
+			requestAnimationFrame(update); //called more or less 60 times a second, so it syncs with the display
+			//setInterval(cls,5000);
+			// drawRandomCircle(ctx);
+			
+			canvas = "50";
+		}
+
+		function update(timestamp){ //requestAnimationFrame sends the timestamp
+			// console.log(timestamp);
+			requestAnimationFrame(update); //Better to be at the top so it's already scheduled
+			drawRandomRectangle(ctx);
+			drawRandomCircle(ctx);
+			drawRandomLine(ctx);
+		}
+		
+		function cls(){
+			ctx.clearRect(0,0,640,480);
+		}
+
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+		function getRandomInt(min, max){
+			return Math.floor(Math.random()*(max-min))+min;
+		}
+		
+		function getRandomColor(){
+			function getByte(){
+				return 55 + Math.round(Math.random() * 200);
+			}
+			return "rgba(" + getByte() + "," + getByte() + "," + getByte() + ", .8)";
+		}
+		
+		function drawRandomRectangle(ctx){
+			ctx.save();
+			ctx.fillStyle = getRandomColor();
+			// ctx.shadowColor = "red";
+			// ctx.shadowOffsetX = 0;
+			// ctx.shadowOffsetY = 0;
+			// ctx.shadowBlur = 30;
+			// ctx.strokeStyle = getRandomColor();
+			// ctx.lineWidth = 5;
+
+			var x = Math.random() * 640;
+			var y = Math.random() * 480;
+			var width = Math.random() * 90 + 10;
+			var height = Math.random() * 90 + 10;
+			ctx.fillRect(x,y,width,height); 
+			// ctx.strokeRect(x,y,width,height); 
+			ctx.restore();
+		}
+
+		function drawRandomCircle(ctx){
+			ctx.save();
+			ctx.beginPath();
+			// ctx.arc(100, 100, 100, 0, Math.PI*2, false);
+			ctx.arc(getRandomInt(0, 640), getRandomInt(0, 480), getRandomInt(50, 300), 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fillStyle = getRandomColor();
+			ctx.globalAlpha = 0.2;
+			ctx.fill();
+			// ctx.stroke();
+			ctx.restore();
+		}
+
+		function drawRandomLine(ctx){
+			ctx.save();
+			counter += 0.1;
+			//more drawing state variables
+			ctx.setLineDash(lineDashes[getRandomInt(0, lineDashes.length)]);
+			ctx.strokeStyle = getRandomColor();
+			ctx.lineWidth = getRandomInt(3, 10);
+
+			//start defining a path - in this case just a line
+			ctx.beginPath();
+
+			//move a "pen" to 0,100
+			// ctx.moveTo(0, 100);
+			ctx.moveTo(getRandomInt(0,640), getRandomInt(0,480));
+			// ctx.moveTo(0,0);
+
+			//draw to 640,100
+			// ctx.lineTo(640, 100);
+			ctx.lineTo(getRandomInt(0,640), getRandomInt(0,480));
+			// ctx.lineTo((1+Math.sin(counter))*1280, 480-(1+Math.sin(counter))*240);
+			//close the path
+			ctx.closePath();
+
+			//stroke the path so we can see it
+			ctx.stroke();
+
+			ctx.restore();
+
+		}
+	</script>
+</head>
+<body>
+	<canvas width="640" height="480">
+		Get a real browser!
+	</canvas>
+</body>
+</html>
