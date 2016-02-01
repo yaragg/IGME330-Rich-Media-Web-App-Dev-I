@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Hello Canvas ICE</title>
+	<style type="text/css">
+	@font-face {
+	    font-family: 'Freebooter';
+	    src: url('fonts/freebooterscript-webfont.eot');
+	    src: url('fonts/freebooterscript-webfont.eot?#iefix') format('embedded-opentype'),
+	         url('fonts/freebooterscript-webfont.woff') format('woff'),
+	         url('fonts/freebooterscript-webfont.ttf') format('truetype'),
+	         url('fonts/freebooterscript-webfont.svg#Freebooter') format('svg');
+	    font-weight: normal;
+	    font-style: normal;
+
+	}
+
+	/* Got the following trick from http://stackoverflow.com/questions/2756575/drawing-text-to-canvas-with-font-face-does-not-work-at-the-first-time to make sure the font loads before it's used in the canvas*/
+	#preloadfont {
+	  font-family: "Freebooter";
+	  opacity:0;
+	  height:0;
+	  width:0;
+	  display:inline-block;
+	}
+
+
+	canvas{
+		border:1px solid gray;
+	}
+	</style>
+	<script>
+		// #0 - In this course we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+		'use strict';
+		
+		// #1 call the init function after the pages loads
+		// this is called an "event handler"
+		window.onload = init;
+	
+		function init(){
+			// #2 Now that the page has loaded, start drawing!
+
+			var nameColor = "#B8F0FF";
+			console.log('init called');
+			
+			// A - canvas variable points at <canvas> tag
+			var canvas = document.querySelector("canvas");
+			
+			// B - the ctx variable points at a "2D drawing context"
+			var ctx = canvas.getContext("2d");
+
+			// set shadow properties
+			ctx.save();
+			ctx.shadowColor = "black";
+			ctx.shadowOffsetX = 0;
+			ctx.shadowOffsetY = 0;
+			ctx.shadowBlur = 30;
+
+			// horizontal alignment
+			ctx.textAlign = "center";
+
+			// vertical alignment
+			ctx.textBaseline = "middle";
+			
+			
+			// C - all fill operations are now in yellow
+			ctx.fillStyle = "#04BAA6";
+			
+			// D - fill a rectangle with the current fill color
+			ctx.fillRect(0, 0, 640, 480);
+			
+			// E - set the current font
+			ctx.font = "60pt Freebooter";
+			
+			// F - change the current fill color
+			ctx.fillStyle = nameColor;
+			
+			// G - draw and fill text using current fill color
+			ctx.fillText("Yara Gouffon", 320, 240);
+
+			ctx.font = "40pt serif";
+			ctx.fillStyle = "#CDFFDB";
+
+			ctx.fillText("IGM", 320, 360);
+
+			ctx.fillStyle = nameColor;
+			ctx.fillRect(10, 420, 50, 50);
+			ctx.fillRect(580, 10, 50, 50);
+
+			/*
+			Make your version different:
+
+			i) Change the yellow rectangle to a different solid color.
+
+			ii) Change the text to your name, and change the color of the text to 
+			something else. Note: Color can be specified in any legal CSS way, 
+			i.e. pre-defined keyword, hex, shorthand hex, RGB value, RGB percentage, RGBA,
+			 or even HSL
+			http://www.w3schools.com/cssref/css_colors_legal.asp
+
+
+			iii) Change the font of your name to something else. If you know how to embed
+			 web fonts, find something here and use it: http://www.google.com/fonts
+
+			iv) Add another line of text that reads “IGM”. Make sure that this text
+			 appears in a different color and font than your name did.
+
+			v) Add two squares to your canvas (50 x 50  or so) using 
+			ctx.fillRect(x,y,width,height)- and make sure that the square color is the 
+			same as the first text you 
+			drew (your name).
+
+			*/
+
+			// 2 more drawing state variables
+			ctx.restore();
+			ctx.strokeStyle = "green";
+			ctx.lineWidth = 7;
+
+			// start defining a path - in this case just a line
+			ctx.beginPath();
+
+			// move a "pen" to 0, 100
+			ctx.moveTo(0, 100);
+
+			// draw to 640, 100
+			ctx.lineTo(640, 100);
+
+			// close the path
+			ctx.closePath();
+
+			// stroke the path so we can see it
+			ctx.stroke();
+
+			ctx.strokeStyle = "#95FF7D";
+			ctx.lineWidth = 12;
+			ctx.beginPath();
+			ctx.moveTo(540, 0);
+			ctx.lineTo(540, 480);
+			ctx.closePath();
+			ctx.stroke();
+
+			ctx.strokeStyle = "#95FF7D";
+			ctx.lineWidth = 5;
+			ctx.beginPath();
+			ctx.moveTo(60, 10);
+			ctx.lineTo(10, 10);
+			ctx.lineTo(10, 60);
+			ctx.closePath();
+			ctx.stroke();
+
+		}
+	</script>
+</head>
+<body>
+	<div id="preloadfont">.</div>
+	<canvas width="640" height="480">
+		Get a real browser!
+		<!-- The user will only see the above text if their browser is older and doesn't support <canvas> -->
+	</canvas>
+</body>
+</html>

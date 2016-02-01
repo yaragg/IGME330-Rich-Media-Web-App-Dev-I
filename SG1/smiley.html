@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Smiley Face</title>
+	<script>
+		'use strict';
+
+		window.onload = init;
+
+		function init(){
+			var canvas = document.querySelector("canvas");
+			var ctx = canvas.getContext("2d");
+
+			//Background
+			ctx.fillStyle = "lightcyan";
+			ctx.fillRect(0, 0, 750, 500);
+
+			//Clouds
+			ctx.fillStyle = "white";
+			ctx.beginPath();
+			ctx.arc(50, 50, 30, 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(85, 50, 30, 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fill();
+
+			ctx.beginPath();
+			ctx.arc(300, 70, 30, 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(335, 70, 30, 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fill();
+
+			ctx.beginPath();
+			ctx.arc(550, 60, 30, 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(585, 60, 30, 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fill();
+
+			//Grass	
+			ctx.fillStyle = "lightgreen";
+			ctx.fillRect(0, 400, 750, 100);
+
+			//Horizon line
+			ctx.beginPath();
+			ctx.moveTo(0, 400);
+			ctx.lineTo(750, 400);
+			ctx.closePath();
+			ctx.lineWidth = 6;
+			ctx.strokeStyle = "mediumseagreen";
+			ctx.stroke();
+
+			//Tree
+			ctx.fillStyle = "darkseagreen";
+			ctx.beginPath();
+			ctx.moveTo(50, 200);
+			ctx.lineTo(0, 370);
+			ctx.lineTo(100, 370);
+			ctx.closePath();
+			ctx.fill();
+
+			//Trunk
+			ctx.strokeStyle = "peru";
+			ctx.lineWidth = 13;	
+			ctx.beginPath();
+			ctx.moveTo(50, 370);
+			ctx.lineTo(50, 420);
+			ctx.closePath();
+			ctx.stroke();
+
+			//Smiley circle
+			ctx.fillStyle = "lightgoldenrodyellow";
+			ctx.beginPath();
+			ctx.arc(400, 290, 160, 0, Math.PI*2, false);
+			ctx.closePath();
+			ctx.fill();
+
+			//Left eye
+			ctx.strokeStyle = "goldenrod";
+			ctx.lineWidth = 5;
+			ctx.beginPath();
+			ctx.moveTo(310, 250);
+			ctx.lineTo(330, 220);
+			ctx.closePath();
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(330, 220);
+			ctx.lineTo(350, 250);
+			ctx.closePath();
+			ctx.stroke();
+
+			//Right eye
+			ctx.beginPath();
+			ctx.moveTo(460, 250);
+			ctx.lineTo(480, 220);
+			ctx.closePath();
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(480, 220);
+			ctx.lineTo(500, 250);
+			ctx.closePath();
+			ctx.stroke();
+
+			//Mouth
+			ctx.fillStyle = "pink";
+			ctx.beginPath();
+			ctx.arc(400, 325, 60, 0, Math.PI, false);
+			ctx.closePath();
+			ctx.fill();
+		}
+	</script>
+</head>
+<body>
+	<canvas width="750" height="500">
+		What are you, a cave man?
+	</canvas>
+</body>
+</html>
