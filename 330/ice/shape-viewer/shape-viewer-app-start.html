@@ -65,6 +65,7 @@
 			// or do it as a 1-liner
 			document.querySelector('#green').onclick = drawGreen;
 			document.querySelector('#blue').onclick = drawBlue;
+			document.querySelector('#triangle').onclick = drawTriangle;
 
 		}
 		
@@ -86,12 +87,18 @@
 			ctx.fillRect(20,20,460,260); 
 		}
 
-		function drawCircle(){
+		function drawTriangle(){
 			cls();
 			ctx.fillStyle = 'magenta';  
 			ctx.lineWidth = 10;
 			ctx.strokeStyle = "green";
-			ctx.fillRect(20,20,460,260); 
+			ctx.beginPath();
+			ctx.moveTo(250, 100);
+			ctx.lineTo(250-75, 100+150);
+			ctx.lineTo(250+75, 100+150);
+			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
 		}
 
 		function cls(){
@@ -110,7 +117,7 @@
 		<button id="red">Fill Red</button>
 		<button id="green">Fill Green</button>
 		<button id="blue">Fill Blue</button>
-		<button id="triangle">Fill Triangle</button>
+		<button id="triangle">Triangle</button>
 	</section>
 	
 	
