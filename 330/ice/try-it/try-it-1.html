@@ -57,18 +57,56 @@
 			} 
 			
 			// row 2
+			ctx.fillStyle = "red";
+			for(var i=0; i<9; i++){
+				ctx.beginPath();
+				ctx.globalAlpha -= .1;
+				ctx.arc(30+i*75, 170, 20, Math.PI*2, false);
+				ctx.fill();
+			}
 			
 			
 			// row 3
+			ctx.fillStyle = "yellow";
+			ctx.globalAlpha = 1;
+			for(var i=0; i<7; i++){
+				ctx.save();
+				ctx.translate(40+i*100, 300);
+				ctx.rotate(Math.PI/4);
+				ctx.fillRect(-25, -25, 50, 50);
+				ctx.restore();
+			}
 			
 			
 			// row 4
-			
+			ctx.fillStyle = "black";
+			for(var i=0; i<7; i++)
+				drawTriangle(ctx, 40 + i*100, 400, "rgb("+i*255/6+", 0, 0)");
 			
 			
 			// watermark
-			
+			ctx.fillStyle = "darkgray"
+			ctx.globalAlpha = .2;
+			ctx.save();
+			ctx.textBaseline = "middle";
+			ctx.textAlign = "center";
+			ctx.font = "bold 70pt Courier";
+			ctx.lineWidth = 3;
+			ctx.translate(350, 250);
+			ctx.rotate(Math.PI/5);
+			ctx.strokeText("IGME-330", 0, 0);
 
+
+		}
+
+		function drawTriangle(ctx, x, y, color){
+			ctx.fillStyle = color;
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.lineTo(x-25, y+50);
+			ctx.lineTo(x+25, y+50);
+			ctx.closePath();
+			ctx.fill();
 		}
 	</script>
 </head>
