@@ -70,8 +70,18 @@
 			};
 
 			document.querySelector('#strokeStyleChooser').onchange = function(e){
-				if(e.target.value == "gradient"){
+				if(e.target.value == "linear")
+				{
 					var grad = ctx.createLinearGradient(10, 0, 290, 0);
+					grad.addColorStop(0, "pink");
+					grad.addColorStop(1/3, "red");
+					grad.addColorStop(2/3, "purple");
+					grad.addColorStop(1, "blue");
+					gStrokeStyle = grad;
+				}
+				else if(e.target.value == "radial")
+				{
+					var grad = ctx.createRadialGradient(150, 150, 30, 150, 150, 125);
 					grad.addColorStop(0, "pink");
 					grad.addColorStop(1/3, "red");
 					grad.addColorStop(2/3, "purple");
@@ -162,7 +172,8 @@
         		<option value="blue">blue</option>
         		<option value="green">green</option>
         		<option value="gold">gold</option>
-        		<option value="gradient">gradient</option>
+        		<option value="linear">linear gradient</option>
+        		<option value="radial">radial gradient</option>
     		</select>
     	</label>
     	
