@@ -1,0 +1,101 @@
+<html>
+<head>
+	<!--
+		A canvas example from:
+		https://developer.apple.com/library/safari/documentation/AudioVideo/Conceptual/HTML-canvas-guide/DrawingLinesandShapes/DrawingLinesandShapes.html
+		Their coding style is different from what we'll be using in class - use our style, not theirs.
+	-->
+    <title>Simple curve example</title>
+    <style>
+		canvas{
+			background: #ffffff;
+			cursor: pointer;
+			margin-left: 10px;
+			margin-top: 10px;
+			box-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+		}
+ 	</style>
+    <script type="text/javascript">
+        var canvas, ctx;
+        var ctrlX = 5;
+        var ctrlY = 150;
+        var speed = 3.0;
+        var vector;
+        var height, width;
+ 
+	function init() {
+		canvas = document.querySelector("canvas");
+		ctx = canvas.getContext("2d");
+        width = canvas.width;
+        height = canvas.height;
+        vector = getRandomUnitVector(); 
+		drawCurves();
+	}
+
+    function cls(){
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, width, height);
+    }
+ 
+   function drawCurves() {
+        requestAnimationFrame(drawCurves);
+
+        cls();
+       	ctx.lineWidth="3";
+        ctx.strokeStyle = "black";
+
+        ctrlX += speed * vector.x;
+        ctrlY += speed * vector.y;
+
+        if (ctrlX >= canvas.width || ctrlX <= 0){
+            vector.x *= -1;
+            ctrlX += speed * vector.x;
+        }
+        
+        if (ctrlY >= canvas.height || ctrlY <= 0){
+            vector.y *= -1;
+            ctrlY += speed * vector.y;
+        }
+
+        var ctrlXa = 50;
+        var ctrlYa = 300;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(ctrlX, ctrlY, canvas.width, canvas.height);
+        ctx.stroke();
+        
+        ctx.strokeStyle = "red";
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(ctrlX, ctrlY, ctrlXa, ctrlYa, canvas.width, canvas.height);
+        ctx.stroke();
+    }
+
+    //Copied from the animated-curves-playground.html file
+    function getRandomUnitVector(){
+        var x = getRandom(-1,1);
+        var y = getRandom(-1,1);
+        var length = Math.sqrt(x*x + y*y);
+        if(length == 0){ // very unlikely
+            x=1; // point right
+            y=0;
+            length=1;
+        } else{
+            x /= length;
+            y /= length;
+        }
+        
+        return {x:x, y:y};
+    }
+
+    function getRandom(min, max) {
+            return Math.random() * (max - min) + min;
+    }
+
+    </script>
+</head>
+<body onload="init()" style="background-color:#e0e0e0">
+    <canvas height="400" width="600">
+    </canvas>
+</body>
+</html>
