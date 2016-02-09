@@ -70,7 +70,15 @@
 			};
 
 			document.querySelector('#strokeStyleChooser').onchange = function(e){
-				gStrokeStyle = e.target.value;
+				if(e.target.value == "gradient"){
+					var grad = ctx.createLinearGradient(10, 0, 290, 0);
+					grad.addColorStop(0, "pink");
+					grad.addColorStop(1/3, "red");
+					grad.addColorStop(2/3, "purple");
+					grad.addColorStop(1, "blue");
+					gStrokeStyle = grad;
+				}
+				else gStrokeStyle = e.target.value;
 				drawLines();
 			};
 		
@@ -154,6 +162,7 @@
         		<option value="blue">blue</option>
         		<option value="green">green</option>
         		<option value="gold">gold</option>
+        		<option value="gradient">gradient</option>
     		</select>
     	</label>
     	
