@@ -59,31 +59,19 @@
 			ctx.fillRect(0,0,500,300); 
 			
 			// #3 Hook up buttons
-			var redButton = document.querySelector('#red')
-			redButton.onclick = drawRed;
+			var redButton = document.querySelector('#red');
+			redButton.onclick = function(){ drawBox("#FF0000"); };
 			
 			// or do it as a 1-liner
-			document.querySelector('#green').onclick = drawGreen;
-			document.querySelector('#blue').onclick = drawBlue;
+			document.querySelector('#green').onclick = function(){ drawBox("#00FF00"); };
+			document.querySelector('#blue').onclick = function(){ drawBox("#0000FF"); };
 			document.querySelector('#triangle').onclick = drawTriangle;
+			document.querySelector('#circle').onclick = drawCircle;
 
 		}
 		
-		function drawRed(){
-			// all fill operations are now in red
-			ctx.fillStyle = 'red';  
-			
-			// fill a rectangle with the current fill color
-			ctx.fillRect(20,20,460,260); 
-		}
-		
-		function drawGreen(){
-			ctx.fillStyle = '#00FF00';  
-			ctx.fillRect(20,20,460,260); 
-		}
-
-		function drawBlue(){
-			ctx.fillStyle = '#0000FF';  
+		function drawBox(color){
+			ctx.fillStyle = color;  
 			ctx.fillRect(20,20,460,260); 
 		}
 
@@ -93,10 +81,21 @@
 			ctx.lineWidth = 10;
 			ctx.strokeStyle = "green";
 			ctx.beginPath();
-			ctx.moveTo(250, 100);
-			ctx.lineTo(250-75, 100+150);
-			ctx.lineTo(250+75, 100+150);
+			ctx.moveTo(250, 75);
+			ctx.lineTo(175, 225);
+			ctx.lineTo(325, 225);
 			ctx.closePath();
+			ctx.fill();
+			ctx.stroke();
+		}
+
+		function drawCircle(){
+			cls();
+			ctx.fillStyle = "purple";
+			ctx.lineWidth = 5;
+			ctx.strokeStyle = "white"
+			ctx.beginPath();
+			ctx.arc(250, 150, 75, Math.PI*2, false);
 			ctx.fill();
 			ctx.stroke();
 		}
@@ -118,6 +117,7 @@
 		<button id="green">Fill Green</button>
 		<button id="blue">Fill Blue</button>
 		<button id="triangle">Triangle</button>
+		<button id="circle">Circle</button>
 	</section>
 	
 	
