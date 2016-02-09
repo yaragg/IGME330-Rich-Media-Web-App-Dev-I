@@ -42,7 +42,7 @@
 	
 	// CONSTANTS
 	var DEFAULT_LINE_WIDTH = 3;
-	var DEFAULT_STROKE_STYLE = "red";
+	var DEFAULT_STROKE_STYLE = "black";
 	
 	// FUNCTIONS
 	function init(){
@@ -59,27 +59,65 @@
 		ctx.lineJoin = "round"; // "round", "bevel", "miter" (default "miter")
 
 		drawGrid(ctx, 'lightgray', 10, 10);
+
+		//Hook up event listeners
+		canvas.onmousedown = doMousedown;
+		canvas.onmousemove = doMousemove;
+		canvas.onmouseup = doMouseup;
+		canvas.onmouseout = doMouseout;
 		
-		
+		document.querySelector("#lineWidthChooser").onchange = doLineWidthChange;
+
+		document.querySelector("#strokeStyleChooser").onchange = doStrokeStyleChange;
+
+		document.querySelector("#clearButton").onclick = doClear;
+
+		document.querySelector("#exportButton").onclick = doExport;
 	}
 	
 	
 	// EVENT CALLBACK FUNCTIONS
 	function doMousedown(e){
-		console.log(e.type);
+		dragging = true;
+
+		//get location of mouse in canvas coordinates
+		var mouse = getMouse(e);
+
+		//PENCIL TOOL
+		ctx.beginPath();
+
+		//move pen to x,y of mouse
+		ctx.moveTo(mouse.x, mouse.y);
 	}
  
  	function doMousemove(e) {
- 		
+ 		//bail out if the mouse button is not down
+ 		if(!dragging) return;
+
+ 		//get location of mouse in canvas coordinates
+ 		var mouse = getMouse(e);
+
+ 		//PENCIL TOOL
+ 		//set ctx.strokeStyle and ctx.lineWidth to correct global values
+ 		ctx.strokeStyle = strokeStyle;
+ 		ctx.lineWidth = lineWidth;
+
+ 		//draw a line to x,y of mouse
+ 		ctx.lineTo(mouse.x, mouse.y);
+
+ 		//stroke the line
+ 		ctx.stroke();
 	}
 	
 	function doMouseup(e) {
-		console.log(e.type);
+		dragging = false;
+		ctx.closePath();
 	}
 	
 	// if the user drags out of the canvas
 	function doMouseout(e) {
-		console.log(e.type);
+		dragging = false;
+		ctx.closePath();
 	}
 	
 	function doClear(){
@@ -95,6 +133,14 @@
 		var windowOptions = "left=0,top=0,width=" + canvas.width + ",height=" + canvas.height +",toolbar=0,resizable=0";
 		var myWindow = window.open(data,windowName,windowOptions);
 		myWindow.resizeTo(canvas.width,canvas.height); // needed so Chrome would display image
+	 }
+
+	 function doLineWidthChange(e){
+	 	lineWidth = e.target.value;
+	 }
+
+	 function doStrokeStyleChange(e){
+	 	strokeStyle = e.target.value;
 	 }
 	
 	
@@ -139,10 +185,12 @@
 			ctx.stroke();
 		}
 		
-		/*
-			Need horizontal lines!
-			You write it!
-		*/
+		for (var y = cellWidth + 0.5; y < ctx.canvas.height; y += cellWidth) {
+			ctx.beginPath();
+			ctx.moveTo(0, y);
+			ctx.lineTo(ctx.canvas.width, y);
+			ctx.stroke();
+		}
 		
 		
 		// restore the drawing state
@@ -161,6 +209,16 @@
 		<label>Tool:
 			<select id="toolChooser">
 				<option value="toolPencil">Pencil</option>
+    		</select>
+    	</label>
+
+    	<label>Stroke Color: 
+			<select id="strokeStyleChooser">
+				<option value="black" selected>Black</option>
+				<option value="blue">Blue</option>
+        		<option value="green">Green</option>
+        		<option value="red">Red</option>
+				<option value="yellow">Yellow</option>
     		</select>
     	</label>
     	
