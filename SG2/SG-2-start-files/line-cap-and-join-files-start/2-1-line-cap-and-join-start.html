@@ -22,6 +22,10 @@
 		font-family: verdana,tahoma,sans-serif;
 		
  	}
+
+ 	#emoji{
+ 		display: none;
+ 	}
  	
  	label + label{
  		margin-left:20px;
@@ -37,6 +41,7 @@
 		var gLineJoin = "bevel";
 		var gLineDash = [];
 		var gStrokeStyle = "black";
+		var pat;
 		
 		// #1 - wait for page to load
 		window.onload = init; 
@@ -48,6 +53,8 @@
 			
 			// #3 - get pointer to "drawing context" and drawing API
 			ctx = canvas.getContext('2d');
+			var emoji = document.querySelector("#emoji");
+			pat = ctx.createPattern(emoji, "repeat");
 			
 			
 			document.querySelector('#lineCapChooser').onchange = function(e){
@@ -88,6 +95,8 @@
 					grad.addColorStop(1, "blue");
 					gStrokeStyle = grad;
 				}
+				else if(e.target.value == "pattern")
+					gStrokeStyle = pat;
 				else gStrokeStyle = e.target.value;
 				drawLines();
 			};
@@ -174,8 +183,11 @@
         		<option value="gold">gold</option>
         		<option value="linear">linear gradient</option>
         		<option value="radial">radial gradient</option>
+        		<option value="pattern">emoji pattern</option>
     		</select>
     	</label>
+
+    	<img id="emoji" src="grimacing-face-emoji-small.png" />
     	
     	</section>
 </body>
