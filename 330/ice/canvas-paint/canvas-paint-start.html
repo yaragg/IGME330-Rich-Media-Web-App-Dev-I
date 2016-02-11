@@ -17,6 +17,15 @@
          top: 10px;
          box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
       }
+
+      #topCanvas{
+      	background: rgba(0, 0, 0, 0);
+      	position: absolute;
+      	left: 10px;
+      	top: 10px;
+      	z-index: 1;
+      	cursor: pointer;
+      }
       
       
        #controls {
@@ -39,10 +48,18 @@
 	
 	// GLOBALS
 	var canvas,ctx,dragging=false,lineWidth,strokeStyle;
+	var currentTool;
+	var fillStyle; //used by rectangle tool
+	var origin; //used by rectangle and line tools
+	var topCanvas, topCtx;
 	
 	// CONSTANTS
 	var DEFAULT_LINE_WIDTH = 3;
 	var DEFAULT_STROKE_STYLE = "black";
+	var DEFAULT_FILL_STYLE = "blue";
+	var TOOL_PENCIL = "toolPencil";
+	var TOOL_RECTANGLE = "toolRectangle";
+	var TOOL_LINE = "toolLine";
 	
 	// FUNCTIONS
 	function init(){
@@ -51,20 +68,26 @@
 		ctx = canvas.getContext('2d');
 		lineWidth = DEFAULT_LINE_WIDTH;
 		strokeStyle = DEFAULT_STROKE_STYLE;
+		fillStyle = DEFAULT_FILL_STYLE;
+		currentTool = TOOL_PENCIL;
+		origin = {}; //empty object
+		topCanvas = document.querySelector('#topCanvas');
+		topCtx = topCanvas.getContext('2d');
 
 		//set initial properties of the graphics context
-		ctx.lineWidth = lineWidth;
-		ctx.strokeStyle = strokeStyle;
-		ctx.lineCap = "round"; // "butt", "round", "square" (default "butt")
-		ctx.lineJoin = "round"; // "round", "bevel", "miter" (default "miter")
+		topCtx.lineWidth = ctx.lineWidth = lineWidth;
+		topCtx.strokeStyle = ctx.strokeStyle = strokeStyle;
+		topCtx.fillStyle = ctx.fillStyle = fillStyle;
+		topCtx.lineCap = ctx.lineCap = "round"; // "butt", "round", "square" (default "butt")
+		topCtx.lineJoin = ctx.lineJoin = "round"; // "round", "bevel", "miter" (default "miter")
 
 		drawGrid(ctx, 'lightgray', 10, 10);
 
 		//Hook up event listeners
-		canvas.onmousedown = doMousedown;
-		canvas.onmousemove = doMousemove;
-		canvas.onmouseup = doMouseup;
-		canvas.onmouseout = doMouseout;
+		topCanvas.onmousedown = doMousedown;
+		topCanvas.onmousemove = doMousemove;
+		topCanvas.onmouseup = doMouseup;
+		topCanvas.onmouseout = doMouseout;
 		
 		document.querySelector("#lineWidthChooser").onchange = doLineWidthChange;
 
@@ -73,6 +96,14 @@
 		document.querySelector("#clearButton").onclick = doClear;
 
 		document.querySelector("#exportButton").onclick = doExport;
+
+		document.querySelector("#toolChooser").onchange = function(e){
+			currentTool = e.target.value;
+		};
+
+		document.querySelector("#fillStyleChooser").onchange = function(e){
+			fillStyle = e.target.value;
+		};
 	}
 	
 	
@@ -83,11 +114,17 @@
 		//get location of mouse in canvas coordinates
 		var mouse = getMouse(e);
 
-		//PENCIL TOOL
-		ctx.beginPath();
-
-		//move pen to x,y of mouse
-		ctx.moveTo(mouse.x, mouse.y);
+		switch(currentTool){
+			case TOOL_PENCIL:
+				ctx.beginPath();
+				ctx.moveTo(mouse.x, mouse.y);
+				break;
+			case TOOL_RECTANGLE:
+			case TOOL_LINE:
+				origin.x = mouse.x;
+				origin.y = mouse.y;
+				break;
+		}
 	}
  
  	function doMousemove(e) {
@@ -97,32 +134,94 @@
  		//get location of mouse in canvas coordinates
  		var mouse = getMouse(e);
 
- 		//PENCIL TOOL
- 		//set ctx.strokeStyle and ctx.lineWidth to correct global values
- 		ctx.strokeStyle = strokeStyle;
- 		ctx.lineWidth = lineWidth;
+ 		switch(currentTool){
+ 			case TOOL_PENCIL:
+				//set ctx.strokeStyle and ctx.lineWidth to correct global values
+		 		ctx.strokeStyle = strokeStyle;
+		 		ctx.lineWidth = lineWidth;
 
- 		//draw a line to x,y of mouse
- 		ctx.lineTo(mouse.x, mouse.y);
+		 		//draw a line to x,y of mouse
+		 		ctx.lineTo(mouse.x, mouse.y);
 
- 		//stroke the line
- 		ctx.stroke();
+		 		//stroke the line
+		 		ctx.stroke();
+		 		break;
+
+	 		case TOOL_RECTANGLE:
+	 			/*These adjustments keep the rectangle tool working even if the user drags from right to left. Recall that canvas will draw a rectangle left to right with the ctx.fillRect() and ctx.strokeRect() methods*/
+	 			var x = Math.min(mouse.x, origin.x);
+	 			var y = Math.min(mouse.y, origin.y);
+	 			var w = Math.abs(mouse.x - origin.x);
+	 			var h = Math.abs(mouse.y - origin.y);
+
+	 			//fill and stroke the rectangle
+	 			topCtx.strokeStyle = strokeStyle;
+	 			topCtx.fillStyle = fillStyle;
+	 			topCtx.lineWidth = lineWidth;
+	 			topCtx.globalAlpha = .3;
+
+	 			//erase the old rectangle
+	 			clearTopCanvas();
+
+	 			//draw new rectangle
+	 			topCtx.fillRect(x, y, w, h);
+	 			topCtx.strokeRect(x, y, w, h);
+	 			break;
+
+ 			case TOOL_LINE:
+	 			topCtx.strokeStyle = strokeStyle;
+	 			topCtx.fillStyle = fillStyle;
+	 			topCtx.lineWidth = lineWidth;
+
+	 			clearTopCanvas();
+
+	 			topCtx.beginPath();
+	 			topCtx.moveTo(origin.x, origin.y);
+	 			topCtx.lineTo(mouse.x, mouse.y);
+	 			topCtx.stroke();
+ 				break;
+ 		}
 	}
 	
 	function doMouseup(e) {
+		switch(currentTool){
+			case TOOL_PENCIL:
+				ctx.closePath();
+				break;
+			case TOOL_RECTANGLE:
+
+			case TOOL_LINE:
+				if(dragging){
+					ctx.drawImage(topCanvas, 0, 0);
+					clearTopCanvas();
+				}
+				break;
+		}
 		dragging = false;
-		ctx.closePath();
 	}
 	
 	// if the user drags out of the canvas
 	function doMouseout(e) {
+		switch(currentTool){
+			case TOOL_PENCIL:
+				ctx.closePath();
+				break;
+			case TOOL_RECTANGLE:
+			case TOOL_LINE:
+				//cancel the drawing
+				clearTopCanvas();
+				break;
+		}
 		dragging = false;
-		ctx.closePath();
 	}
 	
 	function doClear(){
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		drawGrid(ctx,'lightgray', 10, 10);
+	}
+
+	function clearTopCanvas(){
+		topCtx.clearRect(0, 0, topCtx.canvas.width, topCtx.canvas.height);
 	}
 	
 	function doExport(){
@@ -204,11 +303,17 @@
 	<canvas id="mainCanvas" width="700" height="500">
 	Get a real browser!
 	</canvas>
+
+	<canvas id="topCanvas" width="700" height="500">
+	Get a real browser!
+	</canvas>
 	
 	<div id="controls">
 		<label>Tool:
 			<select id="toolChooser">
 				<option value="toolPencil">Pencil</option>
+				<option value="toolRectangle">Rectangle</option>
+				<option value="toolLine">Line</option>
     		</select>
     	</label>
 
@@ -234,6 +339,16 @@
 				<option value="8">8</option>
         		<option value="9">9</option>
         		<option value="10">10</option>
+    		</select>
+    	</label>
+
+    	<label>Fill Color: 
+			<select id="fillStyleChooser">
+				<option value="black">Black</option>
+				<option value="blue" selected>Blue</option>
+        		<option value="green">Green</option>
+        		<option value="red">Red</option>
+				<option value="yellow">Yellow</option>
     		</select>
     	</label>
     	
