@@ -60,7 +60,8 @@
 	var TOOL_PENCIL = "toolPencil";
 	var TOOL_RECTANGLE = "toolRectangle";
 	var TOOL_LINE = "toolLine";
-	
+	var TOOL_CIRCLE = "toolCircle";
+
 	// FUNCTIONS
 	function init(){
 		// initialize some globals
@@ -120,6 +121,7 @@
 				ctx.moveTo(mouse.x, mouse.y);
 				break;
 			case TOOL_RECTANGLE:
+			case TOOL_CIRCLE:
 			case TOOL_LINE:
 				origin.x = mouse.x;
 				origin.y = mouse.y;
@@ -167,6 +169,7 @@
 	 			topCtx.fillRect(x, y, w, h);
 	 			topCtx.strokeRect(x, y, w, h);
 	 			break;
+	 		case TOOL_CIRCLE: // TODO 
 
  			case TOOL_LINE:
 	 			topCtx.strokeStyle = strokeStyle;
@@ -189,7 +192,18 @@
 				ctx.closePath();
 				break;
 			case TOOL_RECTANGLE:
-
+				//It feels terribly ugly to repeat the code but I haven't been able to figure out a more efficient way :(
+				if(dragging){ 
+ 					var mouse = getMouse(e);
+					var x = Math.min(mouse.x, origin.x);
+	 				var y = Math.min(mouse.y, origin.y);
+	 				var w = Math.abs(mouse.x - origin.x);
+	 				var h = Math.abs(mouse.y - origin.y);
+					topCtx.globalAlpha = 1;
+					topCtx.fillRect(x, y, w, h);
+	 				topCtx.strokeRect(x, y, w, h);
+				}
+			case TOOL_CIRCLE: // TODO 
 			case TOOL_LINE:
 				if(dragging){
 					ctx.drawImage(topCanvas, 0, 0);
@@ -314,6 +328,7 @@
 				<option value="toolPencil">Pencil</option>
 				<option value="toolRectangle">Rectangle</option>
 				<option value="toolLine">Line</option>
+				<option value="toolCircle">Circle</option>
     		</select>
     	</label>
 
