@@ -52,6 +52,7 @@
 	var fillStyle; //used by rectangle tool
 	var origin; //used by rectangle and line tools
 	var topCanvas, topCtx;
+	var useGradient = false;
 	
 	// CONSTANTS
 	var DEFAULT_LINE_WIDTH = 3;
@@ -103,7 +104,19 @@
 		};
 
 		document.querySelector("#fillStyleChooser").onchange = function(e){
+			// if(e.target.value != "gradient")
+			// 	fillStyle = e.target.value;
+			// else{
+			// 	var grad = ctx.createLinearGradient(10, 0, 690, 0);
+			// 	grad.addColorStop(0, "pink");
+			// 	grad.addColorStop(1/3, "red");
+			// 	grad.addColorStop(2/3, "purple");
+			// 	grad.addColorStop(1, "blue");
+			// 	fillStyle = grad;
+			// }
 			fillStyle = e.target.value;
+			if(e.target.value == "gradient") useGradient = true;
+			else useGradient = false;
 		};
 	}
 	
@@ -157,6 +170,7 @@
 	 			var h = Math.abs(mouse.y - origin.y);
 
 	 			//fill and stroke the rectangle
+	 			if(useGradient == true) doGradient(origin.x, w);
 	 			topCtx.strokeStyle = strokeStyle;
 	 			topCtx.fillStyle = fillStyle;
 	 			topCtx.lineWidth = lineWidth;
@@ -169,7 +183,25 @@
 	 			topCtx.fillRect(x, y, w, h);
 	 			topCtx.strokeRect(x, y, w, h);
 	 			break;
-	 		case TOOL_CIRCLE: // TODO 
+	 		case TOOL_CIRCLE:
+	 			var radius = Math.sqrt(Math.pow(mouse.x - origin.x, 2) + Math.pow(mouse.y - origin.y, 2));
+	 			if(useGradient == true) doGradient(origin.x, radius);
+	 			topCtx.strokeStyle = strokeStyle;
+	 			topCtx.fillStyle = fillStyle;
+	 			topCtx.lineWidth = lineWidth;
+	 			topCtx.globalAlpha = .3;
+
+	 			clearTopCanvas();
+
+	 			
+
+	 			topCtx.beginPath();
+	 			topCtx.arc(origin.x, origin.y, radius, 0, Math.PI*2);
+	 			topCtx.closePath();
+	 			topCtx.fill();
+	 			topCtx.stroke();
+	 			break;
+
 
  			case TOOL_LINE:
 	 			topCtx.strokeStyle = strokeStyle;
@@ -202,8 +234,25 @@
 					topCtx.globalAlpha = 1;
 					topCtx.fillRect(x, y, w, h);
 	 				topCtx.strokeRect(x, y, w, h);
+	 				ctx.drawImage(topCanvas, 0, 0);
+					clearTopCanvas();
 				}
-			case TOOL_CIRCLE: // TODO 
+				break;
+			case TOOL_CIRCLE:
+				if(dragging){
+ 					var mouse = getMouse(e);
+		 			var radius = Math.sqrt(Math.pow(mouse.x - origin.x, 2) + Math.pow(mouse.y - origin.y, 2));
+
+					topCtx.globalAlpha = 1;
+		 			topCtx.beginPath();
+		 			topCtx.arc(origin.x, origin.y, radius, 0, Math.PI*2);
+		 			topCtx.closePath();
+		 			topCtx.fill();
+		 			topCtx.stroke();
+	 				ctx.drawImage(topCanvas, 0, 0);
+					clearTopCanvas();
+				}
+				break;
 			case TOOL_LINE:
 				if(dragging){
 					ctx.drawImage(topCanvas, 0, 0);
@@ -221,6 +270,7 @@
 				ctx.closePath();
 				break;
 			case TOOL_RECTANGLE:
+			case TOOL_CIRCLE:
 			case TOOL_LINE:
 				//cancel the drawing
 				clearTopCanvas();
@@ -254,6 +304,15 @@
 
 	 function doStrokeStyleChange(e){
 	 	strokeStyle = e.target.value;
+	 }
+
+	 function doGradient(start, end){
+	 	var grad = ctx.createLinearGradient(start, 0, end, 0);
+		grad.addColorStop(0, "pink");
+		grad.addColorStop(1/3, "red");
+		grad.addColorStop(2/3, "purple");
+		grad.addColorStop(1, "blue");
+		fillStyle = grad;
 	 }
 	
 	
@@ -364,6 +423,7 @@
         		<option value="green">Green</option>
         		<option value="red">Red</option>
 				<option value="yellow">Yellow</option>
+				<option value="gradient">Gradient</option>
     		</select>
     	</label>
     	
