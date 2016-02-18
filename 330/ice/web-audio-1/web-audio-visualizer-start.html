@@ -34,7 +34,7 @@
 		var analyserNode;
 		var canvas,ctx;
         var maxRadius = 200;
-		var invert = true, tintRed = true, noise = true, lines = true;
+		var invert = false, tintRed = false, noise = true, lines = false;
         
 		function init(){
 			// set up canvas stuff
@@ -101,6 +101,15 @@
             document.querySelector("#maxRadius").onchange = function(e){
 			 	 document.querySelector("#sliderResults").innerHTML = e.target.value;
 			 };
+            
+			document.getElementById('myCheckbox').onchange = function(e){
+				//console.log("checked=" + e.target.checked);
+				var msg = "";
+				if( e.target.checked){
+				 	msg = "checked";
+				}
+				document.querySelector("#checkboxResults").innerHTML = msg;
+			};
 		}
 		
 		function playStream(audioElement,path){
@@ -230,34 +239,38 @@
             //data[i+3] is the alpha value
             
             //iv) increase red value only
-
-            
-            for(var i=0; i<length; i+=4){
-                //iv) increase red value only
-                if(tintRed){
-                    //just the red channel this time
-                    data[i] = data[i]+100;
+            if(tintRed){  
+                for(var i=0; i<length; i+=4){
+                    data[i] = data[i]+100; //just the red channel this time
                 }
-                
-                //v) Invert every color channel
-                if(invert){
+            }
+            
+            //v) Invert every color channel
+            if(invert){
+                for(var i=0; i<length; i+=4){
                     var red = data[i], green = data[i+1], blue = data[i+2];
                     data[i] = 255 - red; //set red value
                     data[i+1] = 255 - green; //set green value
                     data[i+2] = 255 - blue; //set blue value
                     //data[i+3] is the alpha but we're leaving that alone
                 }
-                
-                //vi) noise
-                if(noise && Math.random() < .10){
-                    data[i] = data[i+1] = data[i+2] = 128; //gray noise
-                    //data[i] = data[i+1] = data[i+2] = 255; //white noise
-                    //data[i] = data[i+1] = data[i+2] = 0; //or black noise
-                    //data[i+3] = 255; //alpha
+            }
+            
+            //vi) noise
+            if(noise){
+                for(var i=0; i<length; i+=4){
+                    if(Math.random() < .10){
+                        data[i] = data[i+1] = data[i+2] = 128; //gray noise
+                        //data[i] = data[i+1] = data[i+2] = 255; //white noise
+                        //data[i] = data[i+1] = data[i+2] = 0; //or black noise
+                        //data[i+3] = 255; //alpha
+                    }
                 }
-                
-                //vii) Draw 2-pixel lines every 50 rows
-                if(lines){
+            }
+            
+            //vii) Draw 2-pixel lines every 50 rows
+            if(lines){
+                for(var i=0; i<length; i+=4){
                     var row = Math.floor(i/4/width);
                     if(row%50==0){
                         //this row
@@ -268,15 +281,7 @@
                     }
                 }
             }
-            
-//            if(noise){
-//                for(var i=0; i<length; i+=4){
-//                    if(Math.random()<.10)
-//                        data[i] = data[i+1] = data[i+2] = 128; //gray noise
-//
-//                }
-//            }
-            
+
             //put the modified data back on the canvas
             ctx.putImageData(imageData, 0, 0);
         }
@@ -309,6 +314,14 @@
 		</label>
 		<button id="fsButton">Go Full Screen</button><br>
 		<p id="status">???</p>
+        
+        <div>
+		<span>
+			<label for="myCheckbox">Unused Checkbox</label>
+                <input type="checkbox" id="myCheckbox">
+            </span>
+            <span style="float:right" id="checkboxResults">???</span>
+	   </div>
 	</div>
 </body>
 </html>
