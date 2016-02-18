@@ -34,7 +34,8 @@
 		var analyserNode;
 		var canvas,ctx;
         var maxRadius = 200;
-		
+		var invert = true, tintRed = true, noise = true, lines = true;
+        
 		function init(){
 			// set up canvas stuff
 			canvas = document.querySelector('canvas');
@@ -184,6 +185,8 @@
                 
 				
 			}
+            
+            manipulatePixels();
 			 
 		} 
 		
@@ -206,6 +209,77 @@
 			}
 			// .. and do nothing if the method is not supported
 		};
+        
+        function manipulatePixels(){
+            //i) Get all of the rgba pixel data of the canvas by grabbing the ImageData Object
+            // https://developer.mozilla.org/en-US/docs/Web/API/ImageData
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
+            //ii) imageData.data is an 8-bit array - values range from 0-255
+            //imageData.data contains 4 values per pixel: 4 x canvas.width x canvas.height = 1024000 values!
+            //we're looping through this 60 FPS - wow!
+            var data = imageData.data;
+            var length = data.length;
+            var width = imageData.width;
+            
+            //iii) Iterate through each pixel
+            //We step by 4 so that we can manipulate 1 pixel per iteration
+            //data[i] is the red value
+            //data[i+1] is the green value
+            //data[i+2] is the blue value
+            //data[i+3] is the alpha value
+            
+            //iv) increase red value only
+
+            
+            for(var i=0; i<length; i+=4){
+                //iv) increase red value only
+                if(tintRed){
+                    //just the red channel this time
+                    data[i] = data[i]+100;
+                }
+                
+                //v) Invert every color channel
+                if(invert){
+                    var red = data[i], green = data[i+1], blue = data[i+2];
+                    data[i] = 255 - red; //set red value
+                    data[i+1] = 255 - green; //set green value
+                    data[i+2] = 255 - blue; //set blue value
+                    //data[i+3] is the alpha but we're leaving that alone
+                }
+                
+                //vi) noise
+                if(noise && Math.random() < .10){
+                    data[i] = data[i+1] = data[i+2] = 128; //gray noise
+                    //data[i] = data[i+1] = data[i+2] = 255; //white noise
+                    //data[i] = data[i+1] = data[i+2] = 0; //or black noise
+                    //data[i+3] = 255; //alpha
+                }
+                
+                //vii) Draw 2-pixel lines every 50 rows
+                if(lines){
+                    var row = Math.floor(i/4/width);
+                    if(row%50==0){
+                        //this row
+                        data[i] = data[i+1] = data[i+2] = data[i+3] = 255;
+                        
+                        //next row
+                        data[i+(width*4)] = data[i+(width*4)+1] = data[i+(width*4)+2] = data[i+(width*4)+3] = 255;
+                    }
+                }
+            }
+            
+//            if(noise){
+//                for(var i=0; i<length; i+=4){
+//                    if(Math.random()<.10)
+//                        data[i] = data[i+1] = data[i+2] = 128; //gray noise
+//
+//                }
+//            }
+            
+            //put the modified data back on the canvas
+            ctx.putImageData(imageData, 0, 0);
+        }
 		
 		
 		window.addEventListener("load",init);
