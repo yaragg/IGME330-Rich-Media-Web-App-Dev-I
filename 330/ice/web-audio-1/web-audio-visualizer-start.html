@@ -17,9 +17,13 @@
     }
       
       #controls{
-      	margin-left:10px;
+        margin-left:10px;
         margin-top:10px;
       }
+        
+        .checkboxes span{
+            margin-right: 17px;
+        }
 	</style>
 	<script>
 	// An IIFE ("Iffy") - see the notes in mycourses
@@ -34,7 +38,7 @@
 		var analyserNode;
 		var canvas,ctx;
         var maxRadius = 200;
-		var invert = false, tintRed = false, noise = true, lines = false;
+		var invert = false, tintRed = false, noise = false, lines = false;
         
 		function init(){
 			// set up canvas stuff
@@ -102,13 +106,20 @@
 			 	 document.querySelector("#sliderResults").innerHTML = e.target.value;
 			 };
             
-			document.getElementById('myCheckbox').onchange = function(e){
-				//console.log("checked=" + e.target.checked);
-				var msg = "";
-				if( e.target.checked){
-				 	msg = "checked";
-				}
-				document.querySelector("#checkboxResults").innerHTML = msg;
+			document.getElementById('red').onchange = function(e){
+                tintRed = e.target.checked;
+			};
+            
+            document.getElementById('invert').onchange = function(e){
+                invert = e.target.checked;
+			};
+            
+            document.getElementById('noise').onchange = function(e){
+                noise = e.target.checked;
+			};
+            
+            document.getElementById('lines').onchange = function(e){
+                lines = e.target.checked;
 			};
 		}
 		
@@ -315,13 +326,29 @@
 		<button id="fsButton">Go Full Screen</button><br>
 		<p id="status">???</p>
         
-        <div>
-		<span>
-			<label for="myCheckbox">Unused Checkbox</label>
-                <input type="checkbox" id="myCheckbox">
+        <div class="checkboxes">
+            <span>
+              <input type="checkbox" id="red">
+              <label for="red">Tint red</label>
             </span>
-            <span style="float:right" id="checkboxResults">???</span>
-	   </div>
+            
+            <span>
+              <input type="checkbox" id="invert">
+              <label for="invert">Invert</label>
+            </span>
+            
+            <span>
+              <input type="checkbox" id="noise">
+              <label for="noise">Noise</label>
+            </span>
+            
+            <span>
+              <input type="checkbox" id="lines">
+              <label for="lines">Lines</label>
+            </span>
+        </div>
+
+
 	</div>
 </body>
 </html>
