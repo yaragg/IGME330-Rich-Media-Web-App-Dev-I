@@ -39,6 +39,7 @@
 		var canvas,ctx;
         var maxRadius = 200;
 		var invert = false, tintRed = false, noise = false, lines = false;
+        var desat = 0.0;
         
 		function init(){
 			// set up canvas stuff
@@ -121,6 +122,10 @@
             document.getElementById('lines').onchange = function(e){
                 lines = e.target.checked;
 			};
+            
+            document.querySelector("#desat").onchange = function(e){
+			 	 document.querySelector("#desatResults").innerHTML = e.target.value+"%";
+			 };
 		}
 		
 		function playStream(audioElement,path){
@@ -151,6 +156,7 @@
 			//analyserNode.getByteTimeDomainData(data); // waveform data
             
             maxRadius = document.querySelector("#maxRadius").value;
+            desat = document.querySelector("#desat").value/100;
 			
 			// DRAW!
 			ctx.clearRect(0,0,800,600);  
@@ -292,6 +298,18 @@
                     }
                 }
             }
+            
+            if(desat != 0){
+                for(var i=0; i<length; i+=4){
+                    var avg = (data[i]+data[i+1]+data[i+2])/3;
+                    data[i] = desat*avg + (1-desat)*data[i];
+                    data[i+1] = desat*avg + (1-desat)*data[i+1];
+                    data[i+2] = desat*avg + (1-desat)*data[i+2];
+
+
+//                        data[i+1] = data[i+2] = avg;
+                }
+            }
 
             //put the modified data back on the canvas
             ctx.putImageData(imageData, 0, 0);
@@ -310,7 +328,7 @@
     
 	<div id="controls">
        <div>
-           <label for="slider1">Max radius</label>
+           <label for="maxRadius">Max radius</label>
            <input id="maxRadius" type ="range" min ="50" max="400" step ="10" value ="200"/>
            <span  id="sliderResults">200</span>
 	   </div>
@@ -347,6 +365,12 @@
               <label for="lines">Lines</label>
             </span>
         </div>
+        
+        <div>
+           <label for="desat">Desaturation</label>
+           <input id="desat" type ="range" min ="0" max="100" step ="5" value ="0"/>
+           <span  id="desatResults">0%</span>
+	   </div>
 
 
 	</div>
