@@ -111,3 +111,12 @@ Array.prototype.randomElement = function(){
 }
 
 
+//  Part III - #1
+// http://stackoverflow.com/questions/2212604/javascript-check-mouse-clicked-inside-the-circle-or-polygon
+// using 'distance squared' here, why?
+// I is for "Instance"
+function pointInsideCircle(x, y, I) {
+	var dx = x - I.x;
+	var dy = y - I.y;
+	return dx * dx + dy * dy <= I.radius * I.radius;
+}

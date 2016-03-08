@@ -17,7 +17,7 @@ var app = app || {};
  */
 app.main = {
 	//  properties
-    WIDTH : 640, 
+    WIDTH : 640,
     HEIGHT: 480,
     canvas: undefined,
     ctx: undefined,
@@ -26,21 +26,37 @@ app.main = {
     paused: false,
     animationID: 0,
 
-    NUM_CIRCLES_START : 5,
-    START_RADIUS : 8, //starting circle radius
-    MAX_SPEED : 80, //pixels-per-second
-    CIRCLE_STATE : { //fake enumeration, actually an object literal
+    //properties
+    CIRCLE : Object.freeze({
+    	NUM_CIRCLES_START : 5,
+    	NUM_CIRCLES_END : 20,
+    	START_RADIUS : 8,
+    	MAX_RADIUS : 45,
+    	MIN_RADIUS : 2,
+    	MAX_LIFETIME : 2.5,
+    	MAX_SPEED : 80,
+    	EXPLOSION_SPEED : 60,
+    	IMPLOSION_SPEED : 86
+
+    }),
+
+    CIRCLE_STATE : Object.freeze({ //fake enumeration, actually an object literal
     	NORMAL : 0,
     	EXPLODING : 1,
     	MAX_SIZE : 2,
     	IMPLODING : 3,
     	DONE : 4
-    },
+    }),
 
-    circles : [],
-    numCircles : this.NUM_CIRCLES_START,
-    
-    
+    GAME_STATE : Object.freeze({ //another fake enumeration
+    	BEGIN : 0,
+    	DEFAULT : 1,
+    	EXPLODING : 2,
+    	ROUND_OVER : 3,
+    	REPEAT_LEVEL : 4,
+    	END : 5
+    }),
+
     // methods
 	init : function() {
 		console.log("app.main.init() called");
@@ -50,25 +66,28 @@ app.main = {
 		this.canvas.height = this.HEIGHT;
 		this.ctx = this.canvas.getContext('2d');
 
-		this.numCircles = this.NUM_CIRCLES_START;
+		this.numCircles = this.CIRCLE.NUM_CIRCLES_START;
 		this.circles = this.makeCircles(this.numCircles);
 		console.log("this.circles = " + this.circles);
+
+		//hook up events
+		this.canvas.onmousedown = this.doMousedown.bind(this);
 		
 		// start the game loop
 		this.update();
 	},
 	
 	update: function(){
-		// 1) LOOP
-		// schedule a call to update()
-	 	this.animationID = requestAnimationFrame(this.update.bind(this));
-
 	 	// 2) PAUSED?
 	 	// if so, bail out of loop
 	 	if(this.paused){
 	 		this.drawPauseScreen(this.ctx);
 	 		return;
 	 	}
+
+		// 1) LOOP	
+		// schedule a call to update()
+	 	this.animationID = requestAnimationFrame(this.update.bind(this));
 	 	
 	 	// 3) HOW MUCH TIME HAS GONE BY?
 	 	var dt = this.calculateDeltaTime();
@@ -147,7 +166,7 @@ app.main = {
 			this.y += this.ySpeed*this.speed*dt;
 		};
 
-		debugger;
+		// debugger;
 		for(var i=0; i<num; i++){
 			//make a new object literal
 			var c = {};
@@ -155,11 +174,11 @@ app.main = {
 			//add .x and .y properties
 			//.x and .y are somewhere on the canvas, with a minimum margin of START_RADIUS
 			//getRandom() is from utilities.js
-			c.x = getRandom(this.START_RADIUS*2, this.WIDTH - this.START_RADIUS*2);
-			c.y = getRandom(this.START_RADIUS*2, this.HEIGHT - this.START_RADIUS*2);
+			c.x = getRandom(this.CIRCLE.START_RADIUS*2, this.WIDTH - this.CIRCLE.START_RADIUS*2);
+			c.y = getRandom(this.CIRCLE.START_RADIUS*2, this.HEIGHT - this.CIRCLE.START_RADIUS*2);
 
 			//ad a radius property
-			c.radius = this.START_RADIUS;
+			c.radius = this.CIRCLE.START_RADIUS;
 
 			//getRandomUnitVector() is from utilities.js
 			var randomVector = getRandomUnitVector();
@@ -167,7 +186,7 @@ app.main = {
 			c.ySpeed = randomVector.y;
 
 			//make more properties
-			c.speed = this.MAX_SPEED;
+			c.speed = this.CIRCLE.MAX_SPEED;
 			c.fillStyle = getRandomColor();
 			c.state = this.CIRCLE_STATE.NORMAL;
 			c.lifetime = 0;
@@ -220,6 +239,26 @@ app.main = {
 		ctx.textBaseline = "middle";
 		this.fillText("... PAUSED ...", this.WIDTH/2, this.HEIGHT/2, "40pt courier", "white");
 		ctx.restore();
+	},
+
+	doMousedown : function(e){
+		var mouse = getMouse(e);
+		//have to call through app.main because this = canvas
+		//can you come up with a better way?
+		// this.checkCircleClicked.bind(app.main, mouse);
+		this.checkCircleClicked(mouse);
+	},
+
+	checkCircleClicked : function(mouse){
+		//looping through circle array backwards, why?
+		for(var i=this.circles.length-1; i>=0; i--){
+			var c = this.circles[i];
+			if (pointInsideCircle(mouse.x, mouse.y, c)){
+				c.fillStyle = "red";
+				c.xSpeed = c.ySpeed = 0;
+				break; //we want to click only one circle
+			}
+		}
 	}
 	
     
