@@ -17,6 +17,7 @@
     }
       
       #controls{
+        float: right;
         margin-left:10px;
         margin-top:10px;
       }
@@ -322,7 +323,7 @@
 	</script>
 </head>
 <body>
-	<canvas id="canvas" width="640" height="400"></canvas>
+	<canvas id="canvas" width="1250" height="700"></canvas>
     
  
     
@@ -334,13 +335,15 @@
 	   </div>
         
 		<audio controls loop></audio>
-		<label>Track: 
+		<p>
+            <label>Track: 
 			<select id="trackSelect" >
 				<option value="media/New Adventure Theme.mp3">New Adventure Theme</option>
 				<option value="media/Peanuts Theme.mp3">Peanuts Theme</option>
 				<option value="media/The Picard Song.mp3">The Picard Song</option>
 			</select>
-		</label>
+		  </label>
+        </p>
 		<button id="fsButton">Go Full Screen</button><br>
 		<p id="status">???</p>
         
