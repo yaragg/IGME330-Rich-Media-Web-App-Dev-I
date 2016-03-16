@@ -31,7 +31,6 @@ app.main = {
     sound : undefined, //required - loaded by main.js
     currentLevel : 0,
     doneCircles : 0,
-    playerClicked : false,
 
     bgAudio : undefined,
     effectAudio : undefined,
@@ -239,7 +238,7 @@ app.main = {
 	},
 
 	drawCircles : function(ctx){
-		if(this.gameState = this.GAME_STATE.REPEAT_LEVEL || this.gameState == this.GAME_STATE.ROUND_OVER || this.gameState == this.GAME_STATE.END) this.ctx.globalAlpha = 0.25;
+		if(this.gameState == this.GAME_STATE.REPEAT_LEVEL || this.gameState == this.GAME_STATE.ROUND_OVER || this.gameState == this.GAME_STATE.END) this.ctx.globalAlpha = 0.25;
 		for(var i=0; i<this.circles.length; i++){
 			var c = this.circles[i];
 			if(c.state === this.CIRCLE_STATE.DONE) continue;
@@ -335,6 +334,7 @@ app.main = {
 		//if the round is over, reset and add 5 more circles
 		if(this.gameState == this.GAME_STATE.ROUND_OVER){
 			this.gameState = this.GAME_STATE.DEFAULT;
+			this.totalScore += this.roundScore;
 			this.numCircles += 5;
 			this.currentLevel++;
 			this.reset();
@@ -346,7 +346,7 @@ app.main = {
 			this.reset();
 		}
 
-		//if came is over, restart the game
+		//if game is over, restart the game
 		if(this.gameState == this.GAME_STATE.END){
 			this.gameState = this.GAME_STATE.BEGIN;
 			this.totalScore = 0;
@@ -370,7 +370,6 @@ app.main = {
 			if (pointInsideCircle(mouse.x, mouse.y, c)){
 				c.xSpeed = c.ySpeed = 0;
 				this.sound.playEffect();
-				playerClicked = true;
 				c.state = this.CIRCLE_STATE.EXPLODING;
 				this.gameState = this.GAME_STATE.EXPLODING;
 				this.roundScore++;
@@ -415,14 +414,14 @@ app.main = {
 				}
 			} // end for
 
-			if(playerClicked && isOver){
+			if(isOver){
 				this.stopBGAudio();
-				if(doneCircles < this.targetNums[this.currentLevel]) this.gameState = this.GAME_STATE.REPEAT_LEVEL;
+				if(this.doneCircles < this.targetNums[this.currentLevel]) this.gameState = this.GAME_STATE.REPEAT_LEVEL;
 				else{
 					this.gameState = this.GAME_STATE.ROUND_OVER;
 				}
 
-				if(this.numCircles >= this.CIRCLE.NUM_CIRCLES_END){
+				if(this.currentLevel >= this.targetNums.length-1){
 					this.gameState = this.GAME_STATE.END;
 				}
 			 }
