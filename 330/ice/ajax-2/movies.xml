@@ -1,0 +1,25 @@
+<movies>
+	<movie rating="8.4">
+		<title>Requiem for a Dream</title>
+		<actor>Jared Leto</actor>
+	</movie>
+	<movie rating="7.0">
+		<title>Sybil</title>
+		<actor>Tammy Blanchard</actor>
+	</movie>
+	<movie rating="8.2">
+		<title>A Beautiful Mind</title>
+		<actor>Russell Crowe</actor>
+	</movie>
+	<movie rating="8.6">
+		<title>The Silence of the Lambs</title>
+		<actor>Anthony Hopkins</actor>
+		<actor>Jodie Foster</actor>
+	</movie>
+	<movie rating="8.1">
+		<title>The Avengers</title>
+		<actor>Tom Hiddleston</actor>
+		<actor>Robert Downey Jr.</actor>
+	</movie>
+
+</movies>
