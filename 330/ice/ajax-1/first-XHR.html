@@ -13,7 +13,7 @@
 		window.onload = init;
 		
 		function init(){
-			document.querySelector('#mybutton').onclick = loadData;
+			document.querySelector('select').onchange = loadData;
 		}
 		
 		function loadData(file){
@@ -24,7 +24,7 @@
 				document.querySelector('#content').innerHTML = response;
 			}
 			
-			var url = file;
+			var url = file.target.value;
 			xhr.open('GET',url,true);
 			// try to prevent browser caching by sending a header to the server
 			xhr.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2010 00:00:00 GMT");
@@ -35,9 +35,10 @@
 	</script>
 </head>
 <body>
-	<!-- <p><button id='mybutton'>Fetch Data</button></p> -->
 	<select>
-		<option value=""></option>
+		<option value="hello.txt">Hello</option>
+		<option value="jabberwocky.txt">Jabberwocky</option>
+		<option value="autopsychography.txt">Autopsychography</option>
 	</select>
 	<div id='content'></div>
 	
