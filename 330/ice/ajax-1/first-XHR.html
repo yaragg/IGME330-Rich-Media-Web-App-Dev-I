@@ -7,6 +7,17 @@
 		*{
 			font-family:tahoma,verdana,sans-serif;
 		}
+		#content{
+			width: 100%;
+			text-align: center;
+			color: #006699;
+		}
+		#wrapper{
+			width: 100%;
+		}
+		select{
+			margin: auto;
+		}
 	</style>
 	<script>
 	(function(){
@@ -35,11 +46,13 @@
 	</script>
 </head>
 <body>
-	<select>
-		<option value="hello.txt">Hello</option>
-		<option value="jabberwocky.txt">Jabberwocky</option>
-		<option value="autopsychography.txt">Autopsychography</option>
-	</select>
+	<div id="wrapper">
+		<select>
+			<option value="hello.txt">Hello</option>
+			<option value="jabberwocky.txt">Jabberwocky</option>
+			<option value="autopsychography.txt">Autopsychography</option>
+		</select>
+	</div>
 	<div id='content'></div>
 	
 </body>
