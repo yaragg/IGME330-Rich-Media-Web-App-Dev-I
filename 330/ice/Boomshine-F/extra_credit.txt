@@ -1,0 +1,4 @@
+Extras:
+* Hard coded target values for each level
+* Target values were copied from the original Boomshine
+* Keeps track of high scores
