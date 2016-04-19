@@ -1,0 +1,18 @@
+{"movies":[
+		{"title":"Requiem for a Dream",
+		"actors":["Jared Leto"],
+		"rating":8.4},
+		{"title":"Sybil",
+		"actors":["Tammy Blanchard"],
+		"rating":7.0},
+		{"title":"A Beautiful Mind",
+		"actors":["Russell Crowe"],
+		"rating":8.2},
+		{"title":"The Silence of the Lambs",
+		"actors":["Anthony Hopkins", "Jodie Foster"],
+		"rating":8.6},
+		{"title":"The Avengers",
+		"actors":["Tom Hiddleston", "Robert Downey Jr."],
+		"rating":8.1}
+	]
+}
