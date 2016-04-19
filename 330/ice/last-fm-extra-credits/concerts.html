@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>XHR XML Example</title>
+	<style>
+		.event
+		{
+			border-style: solid;
+			border-width: 1px;
+			margin: 5px;
+			padding: 5px;
+		}
+		*{
+			font-family:tahoma,verdana,sans-serif;
+		}
+	</style>
+	<script>
+	
+	"use strict";
+	
+	(function(){
+		window.onload = init;
+		
+		function init(){
+			document.querySelector('#mybutton').onclick = loadData;
+		}
+		
+		function loadData(){
+			var xhr = new XMLHttpRequest();
+			var events =[];
+			xhr.onload = function()
+			{ 
+				var html = "<h2>Here are the old concerts!</h2>";
+				var xml = xhr.responseXML;
+				events = xml.querySelectorAll("event"); 
+				
+				for (var i=0; i < events.length; ++i)
+				{
+					var event = events[i];
+					var title = event.querySelector("title").firstChild.nodeValue;
+					var location = event.querySelector("location").querySelector("city").firstChild.nodeValue;
+					var time = event.querySelector("startDate").firstChild.nodeValue;
+					var image = event.querySelector("event>image[size='extralarge']"); 
+					
+					html += "<div class='event'>"; 
+					html += "<h3>" + title + "</h3>"; 
+					html += "<p>" + location + " -- " + time + "</p>";
+					html += "<img src=" + image.firstChild.nodeValue + ">";
+					html += "</div>"; 
+				}
+				// 8) Update the #content div 
+				document.querySelector('#content').innerHTML = html; 
+			}
+			
+			var url = "last-fm-results.xml";
+			xhr.open('GET',url,true);
+			// try to prevent browser caching by sending a header to the server
+			xhr.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2010 00:00:00 GMT");
+			xhr.send();
+		}
+	}())
+	</script>
+</head>
+<body>
+	<h1>Concerts!</h1>
+	<p><button id='mybutton'>Let's see some old concert dates</button></p>
+	<div id='content'></div>
+	
+</body>
+</html>
