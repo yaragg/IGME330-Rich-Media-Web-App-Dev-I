@@ -33,14 +33,20 @@
         top: 150px;
         left: 10px;
       }
+      #isometricZoomButton{
+        top: 190px;
+        left: 10px;
+      }
     </style>
     <script type="text/javascript" src="data/coffee-data.js"></script>
+    <script type="text/javascript" src="data/building-data.js"></script>
   </head>
   <body>
     <div id="map"></div>
     <p><button id="worldZoomButton">World Zoom (1)</button></p>
     <p><button id="defaultZoomButton">Default Zoom (16)</button></p>
     <p><button id="buildingZoomButton">Building Zoom (20)</button></p>
+    <p><button id="isometricZoomButton">Isometric View (18)</button></p>
     <script>
       var map;
       var infowindow;
@@ -51,9 +57,15 @@
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        map.mapTypeId = 'satellite';
+        map.setTilt(45);
 
         for(var i=0; i<coffeeShops.length; i++){
           addMarker(coffeeShops[i].latitude, coffeeShops[i].longitude, coffeeShops[i].title);
+        }
+
+        for(var i=0; i<buildings.length; i++){
+          drawPolygon(buildings[i].path, buildings.title);
         }
       }
 
@@ -80,6 +92,18 @@
         });
       }
 
+      function drawPolygon(paths, title){
+        var paths = paths.map(function(e){return new google.maps.LatLng(e);});
+        var polyOptions = {
+          strokeColor: "lime",
+          fillColor: "pink",
+          fillOpacity: 0.5,
+          paths : paths,
+          map: map
+        }
+        var poly = new google.maps.Polygon(polyOptions);
+      }
+
       document.querySelector("#worldZoomButton").onclick = function(){
         map.setZoom(1);
       };
@@ -88,6 +112,10 @@
       };
       document.querySelector("#buildingZoomButton").onclick = function(){
         map.setZoom(20);
+      };
+      document.querySelector("#isometricZoomButton").onclick = function(){
+        map.setMapTypeId('satellite');
+        map.setZoom(18);
       };
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhCexChun1mGDwCX7aFA2YOkbTkIfElW4&callback=initMap"
